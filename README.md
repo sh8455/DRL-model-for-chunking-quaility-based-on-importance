@@ -1,5 +1,8 @@
 # DRL-model-for-chunking-quaility-based-on-importance
 
+publisher: Korea Institute of Information Scientists and Engineers
+Korea Software Congress 2023
+
 ## Introduction
 - The recent rapid growth of over-the-top (OTT) media services and the rise of Internet graphics has increased the demand for online video streaming and made efficient use of network resources critical.
 - Since a significant portion of this traffic comes from mobile devices, it is important to consider an individual's mobile data usage and the importance of each chunk of video to provide an optimal streaming experience.
