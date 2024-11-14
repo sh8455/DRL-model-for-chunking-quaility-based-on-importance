@@ -1,6 +1,6 @@
 # DRL-model-for-chunking-quaility-based-on-importance
 
-publisher: Korea Institute of Information Scientists and Engineers
+publisher: Korea Institute of Information Scientists and Engineers</br>
 Korea Software Congress 2023
 
 ## Introduction
