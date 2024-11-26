@@ -2,8 +2,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-import random
-
 from stable_baselines3 import DQN
 
 # Defining the Video Streaming Environment Class
@@ -21,7 +19,6 @@ class VideoStreamingEnv:
         self.chunk_latency = [] # 청크별 버퍼링 시간을 담을 변수
         
     def reset(self):
-        # self.user_bandwidth = self.bandwidths[random.randint(0,4)]
         self.chunk_important = np.array([random.randint(1,6) for _ in range(self.num_chunks)])
         self.current_chunk = 0
         self.chunk_qualities = []
@@ -44,13 +41,9 @@ class VideoStreamingEnv:
         chunk_important_quality = 0 if cur_quality > max_limit else cur_important * cur_quality # 청크별 중요도와 현재 화질의 곱
 
         qoe = (cur_quality + quality_diff + buffer_diff + chunk_important_quality)
-        # qoe = (0.2*cur_quality + 0.2*quality_diff + 0.2*buffer_diff + 0.4*chunk_important_quality)
-        #print(cur_quality, quality_diff, 1-buffer_diff, chunk_important_quality, qoe)
         
         # 총 청크별 화질의 합 제한
         done = False
-        # total_quality = sum(self.chunk_qualities)
-        # if total_quality > self.limit or cur_quality > max_limit:
         if cur_quality > max_limit:
             done = True
             qoe = -50
@@ -142,15 +135,14 @@ class VideoStreamingEnv:
         return self._get_state(), reward, done, {}
 
     def _get_state(self):
-        #cur_quality = self.chunk_qualities[self.current_chunk] if self.current_chunk < len(self.chunk_qualities) else 0
-        #cur_buffering = self.chunk_latency[self.current_chunk] if self.current_chunk < len(self.chunk_latency) else 0
+        cur_quality = self.chunk_qualities[self.current_chunk] if self.current_chunk < len(self.chunk_qualities) else 0
+        cur_buffering = self.chunk_latency[self.current_chunk] if self.current_chunk < len(self.chunk_latency) else 0
         prev_quality = self.chunk_qualities[self.current_chunk - 1] if self.current_chunk > 0 else 0
         prev_buffering = self.chunk_latency[self.current_chunk - 1] if self.current_chunk > 0 else 0
-        obs = np.concatenate((np.array([self.user_bandwidth, prev_quality, prev_buffering]), self.chunk_important))
+        obs = np.concatenate((np.array([self.user_bandwidth, prev_quality, prev_buffering, cur_quality, cur_buffering]), self.chunk_important))
         return obs
     
 bandwidths = [3, 5, 10, 15, 20]
-# chunk_important = np.array([1,1,2,3,4,5,6,5,4,3,2,1,1,1,1,1])
 
 env = VideoStreamingEnv(bandwidths, chunk_play_time=4, user_bandwidth=20)
 
@@ -168,9 +160,6 @@ for episode in range(num_episode):
     model1_chunk_important_list.append(env.chunk_important.copy())
     total_reward = 0
     done = False
-    
-    # chunk_important_per_episode.append(env.chunk_important)
-    # episode_chunk_qualities = []
 
     while not done:
         action, _ = model.predict(obs)
